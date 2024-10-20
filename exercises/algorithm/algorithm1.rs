@@ -2,7 +2,7 @@
 	single linked list merge
 	This problem requires you to merge two ordered singly linked lists into one ordered singly linked list
 */
-// I AM NOT DONE
+
 
 use std::fmt::{self, Display, Formatter};
 use std::ptr::NonNull;
@@ -69,43 +69,43 @@ impl<T> LinkedList<T> {
             },
         }
     }
-	pub fn merge(mut list_a:LinkedList<T>, mut list_b:LinkedList<T>) -> Self
-    where
-    T: Ord,
-{
-    let mut result = LinkedList::new();
+	pub fn merge(mut list_a:LinkedList<T>,mut list_b:LinkedList<T>) -> Self
+	where
+        T: Ord + Clone,
+    {
+        let mut result = LinkedList::new();
 
-    let mut current_a = list_a.start.take();
-    let mut current_b = list_b.start.take();
+        let mut current_a = list_a.start.take();
+        let mut current_b = list_b.start.take();
 
-    while let (Some(a_ptr), Some(b_ptr)) = (current_a, current_b) {
-        unsafe {
-            if (*a_ptr.as_ptr()).val <= (*b_ptr.as_ptr()).val {
-                result.add((*a_ptr.as_ptr()).val);
+        while let (Some(a_ptr), Some(b_ptr)) = (current_a, current_b) {
+            unsafe {
+                if (*a_ptr.as_ptr()).val <= (*b_ptr.as_ptr()).val {
+                    result.add((*a_ptr.as_ptr()).val.clone());
+                    current_a = (*a_ptr.as_ptr()).next;
+                } else {
+                    result.add((*b_ptr.as_ptr()).val.clone());
+                    current_b = (*b_ptr.as_ptr()).next;
+                }
+            }
+        }
+
+        while let Some(a_ptr) = current_a {
+            unsafe {
+                result.add((*a_ptr.as_ptr()).val.clone());
                 current_a = (*a_ptr.as_ptr()).next;
-            } else {
-                result.add((*b_ptr.as_ptr()).val);
+            }
+        }
+
+        while let Some(b_ptr) = current_b {
+            unsafe {
+                result.add((*b_ptr.as_ptr()).val.clone());
                 current_b = (*b_ptr.as_ptr()).next;
             }
         }
-    }
 
-    while let Some(a_ptr) = current_a {
-        unsafe {
-            result.add((*a_ptr.as_ptr()).val);
-            current_a = (*a_ptr.as_ptr()).next;
-        }
+        result
     }
-
-    while let Some(b_ptr) = current_b {
-        unsafe {
-            result.add((*b_ptr.as_ptr()).val);
-            current_b = (*b_ptr.as_ptr()).next;
-        }
-    }
-
-    result
-}
 }
 
 impl<T> Display for LinkedList<T>
